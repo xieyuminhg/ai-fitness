@@ -7,9 +7,15 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from .database import Base, engine
 from .routers import auth, conversations, messages
 
 app = FastAPI(title="AI Fitness API")
+
+
+@app.on_event("startup")
+def on_startup():
+    Base.metadata.create_all(bind=engine)
 
 # 挂载前端静态文件
 frontend_dir = Path(__file__).resolve().parent.parent / "frontend"
